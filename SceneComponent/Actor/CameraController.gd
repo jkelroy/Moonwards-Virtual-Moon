@@ -17,6 +17,7 @@ var excluded_bodies = []
 var mouse_sensitivity: float = 0.10
 var max_up_aim_angle = 55.0
 var max_down_aim_angle = 55.0
+var look_rotation = Vector3.ZERO
 
 func _init().("CameraController"):
 	pass
@@ -74,18 +75,20 @@ func _physics_process(delta):
 
 func _unhandled_input(event):
 	if (event is InputEventMouseMotion):
-		entity.look_dir.x -= event.relative.x * mouse_sensitivity
-		entity.look_dir.y -= event.relative.y * mouse_sensitivity
-		if entity.look_dir.x > 360:
-			entity.look_dir.x = 0
-		elif entity.look_dir.x < 0:
-			entity.look_dir.x = 360
-		if entity.look_dir.y > max_up_aim_angle:
-			entity.look_dir.y = max_up_aim_angle
-		elif entity.look_dir.y < -max_down_aim_angle:
-			entity.look_dir.y = -max_down_aim_angle
+		look_rotation.x -= event.relative.x * mouse_sensitivity
+		look_rotation.y -= event.relative.y * mouse_sensitivity
+		if look_rotation.x > 360:
+			look_rotation.x = 0
+		elif look_rotation.x < 0:
+			look_rotation.x = 360
+		if look_rotation.y > max_up_aim_angle:
+			look_rotation.y = max_up_aim_angle
+		elif look_rotation.y < -max_down_aim_angle:
+			look_rotation.y = -max_down_aim_angle
 
-		Rotate(entity.look_dir)
+		Rotate(look_rotation)
+		entity.look_rot = look_rotation
+		entity.look_dir = global_transform.origin
 
 func Rotate(var direction):
-	pivot.rotation_degrees = Vector3(direction.y, direction.x, 0)
+	self.rotation_degrees = Vector3(direction.y, direction.x, 0)
